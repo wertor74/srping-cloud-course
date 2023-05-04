@@ -1,0 +1,40 @@
+server:
+  port: 8093
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+spring:
+  application:
+    name: store-book-service
+  config:
+    import: "optional:configserver:"
+  profiles:
+    active: dev
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      fail-fast: true
+      retry:
+        initial-interval: 10000
+        max-attempts: 20
+        max-interval: 15000
+    stream:
+      kafka:
+        binder:
+          auto-add-partitions: true
+      bindings:
+        bookEventProcessor-in-0:
+          destination: store-book
+    bus:
+      refresh:
+        enabled: true
